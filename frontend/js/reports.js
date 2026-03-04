@@ -91,6 +91,10 @@ async function importAssets() {
 }
 
 async function uploadForm(path, formData) {
+  if (IS_GH_PAGES) {
+    return apiRequest(path, { method: "POST", body: JSON.stringify({}) });
+  }
+
   const token = getToken();
   const response = await fetch(path, {
     method: "POST",
