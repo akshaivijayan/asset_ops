@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Assignments - Asset Tracker</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">RE</div>
+        <div><h2>Estate AssetOps</h2><p>Asset Management Suite</p></div>
+      </div>
+      <a class="nav-link" href="dashboard.html">Dashboard</a>
+      <a class="nav-link" href="employees.html">Employees</a>
+      <a class="nav-link" href="assets.html">Assets</a>
+      <a class="nav-link active" href="assignments.html">Assignments</a>
+      <a class="nav-link" href="reports.html">Reports</a>
+      <div class="side-footer"><button class="secondary full" onclick="logout()">Logout</button></div>
+    </aside>
+    <main class="main">
+      <div class="page-head">
+        <div class="page-title">
+          <h1>Assignment Timeline</h1>
+          <p>Manage issue and return cycles with full assignment history.</p>
+        </div>
+        <button id="addAssignmentBtn">Assign Asset</button>
+      </div>
+
+      <section class="panel">
+        <img src="assets/floor-plan.svg" class="preview-image" alt="Real estate floor plan" />
+        <div class="toolbar">
+          <select id="statusFilter">
+            <option value="">All Status</option>
+            <option>Assigned</option>
+            <option>Returned</option>
+          </select>
+          <button onclick="loadAssignments()">Apply Filters</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Assignment ID</th>
+              <th>Asset</th>
+              <th>Employee</th>
+              <th>Assigned</th>
+              <th>Returned</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="assignmentRows"></tbody>
+        </table>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal" id="assignmentModal">
+    <div class="modal-content">
+      <div class="panel-head"><h3>Assign Asset</h3></div>
+      <form id="assignmentForm" class="form-grid">
+        <select name="asset_id" id="assetSelect" required></select>
+        <select name="employee_id" id="employeeSelect" required></select>
+        <input type="date" name="assigned_date" required />
+        <textarea class="span-2" name="notes" placeholder="Assignment notes"></textarea>
+        <button type="submit">Confirm Assignment</button>
+        <button type="button" class="secondary" onclick="closeAssignmentModal()">Cancel</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/assignments.js"></script>
+</body>
+</html>

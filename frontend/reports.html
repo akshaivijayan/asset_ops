@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reports - Asset Tracker</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">RE</div>
+        <div><h2>Estate AssetOps</h2><p>Asset Management Suite</p></div>
+      </div>
+      <a class="nav-link" href="dashboard.html">Dashboard</a>
+      <a class="nav-link" href="employees.html">Employees</a>
+      <a class="nav-link" href="assets.html">Assets</a>
+      <a class="nav-link" href="assignments.html">Assignments</a>
+      <a class="nav-link active" href="reports.html">Reports</a>
+      <div class="side-footer"><button class="secondary full" onclick="logout()">Logout</button></div>
+    </aside>
+    <main class="main">
+      <div class="page-head">
+        <div class="page-title">
+          <h1>Reporting & Imports</h1>
+          <p>Generate management reports and migrate spreadsheets into the platform.</p>
+        </div>
+      </div>
+
+      <section class="panel">
+        <img src="assets/city-banner.svg" class="preview-image" alt="Commercial real estate" />
+        <div class="toolbar">
+          <select id="reportName">
+            <option value="assets-by-employee">Assets by Employee</option>
+            <option value="unassigned-assets">Unassigned Assets</option>
+            <option value="under-repair">Assets Under Repair</option>
+            <option value="warranty-expiring">Warranty Expiring Soon</option>
+          </select>
+          <select id="format">
+            <option value="csv">CSV</option>
+            <option value="excel">Excel</option>
+          </select>
+          <button onclick="downloadReport()">Export Report</button>
+        </div>
+        <div class="toolbar" id="importBox">
+          <label>Employees.xlsx</label>
+          <input type="file" id="empFile" accept=".xlsx,.xls" />
+          <button onclick="importEmployees()">Import Employees</button>
+          <label>Assets.xlsx</label>
+          <input type="file" id="assetFile" accept=".xlsx,.xls" />
+          <button onclick="importAssets()">Import Assets</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h3>Report Preview</h3></div>
+        <table>
+          <thead id="reportHead"></thead>
+          <tbody id="reportBody"></tbody>
+        </table>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/reports.js"></script>
+</body>
+</html>

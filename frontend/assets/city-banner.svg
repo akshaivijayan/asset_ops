@@ -1,0 +1,35 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1600" y2="900" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0A2A43"/>
+      <stop offset="1" stop-color="#145E7A"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#9ED8E8" stop-opacity="0.7"/>
+      <stop offset="1" stop-color="#7EC7DB" stop-opacity="0.2"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <circle cx="1350" cy="130" r="220" fill="#4FB9D0" fill-opacity="0.2"/>
+  <circle cx="260" cy="780" r="260" fill="#58C5DC" fill-opacity="0.16"/>
+  <rect x="170" y="250" width="220" height="420" rx="6" fill="#D5EDF3"/>
+  <rect x="210" y="290" width="50" height="60" fill="#5E9FB5"/>
+  <rect x="290" y="290" width="50" height="60" fill="#5E9FB5"/>
+  <rect x="210" y="390" width="50" height="60" fill="#5E9FB5"/>
+  <rect x="290" y="390" width="50" height="60" fill="#5E9FB5"/>
+  <rect x="220" y="530" width="120" height="140" fill="#31596A"/>
+  <rect x="470" y="180" width="300" height="490" rx="6" fill="#E6F5F9"/>
+  <rect x="520" y="230" width="70" height="80" fill="#78B6CB"/>
+  <rect x="640" y="230" width="70" height="80" fill="#78B6CB"/>
+  <rect x="520" y="350" width="70" height="80" fill="#78B6CB"/>
+  <rect x="640" y="350" width="70" height="80" fill="#78B6CB"/>
+  <rect x="560" y="530" width="120" height="140" fill="#2B4E5D"/>
+  <rect x="860" y="120" width="420" height="550" rx="10" fill="#F0FBFD"/>
+  <rect x="930" y="200" width="90" height="110" fill="#8EC8DA"/>
+  <rect x="1080" y="200" width="90" height="110" fill="#8EC8DA"/>
+  <rect x="930" y="360" width="90" height="110" fill="#8EC8DA"/>
+  <rect x="1080" y="360" width="90" height="110" fill="#8EC8DA"/>
+  <rect x="1010" y="510" width="130" height="160" fill="#2F5667"/>
+  <rect x="0" y="680" width="1600" height="220" fill="#073047"/>
+  <path d="M0 710C300 660 500 760 800 720C1040 690 1280 620 1600 710V900H0V710Z" fill="url(#glass)"/>
+</svg>

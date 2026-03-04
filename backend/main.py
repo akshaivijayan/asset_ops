@@ -1,0 +1,53 @@
+from pathlib import Path
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+
+from .config import settings
+from .database import Base, SessionLocal, engine
+from .models import User
+from .routers import assets, assignments, auth, employees, reports
+from .utils.security import hash_password
+
+app = FastAPI(title=settings.APP_NAME)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[origin.strip() for origin in settings.CORS_ORIGINS.split(",")],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+@app.on_event("startup")
+def startup() -> None:
+    Base.metadata.create_all(bind=engine)
+
+    db = SessionLocal()
+    try:
+        admin = db.query(User).filter(User.email == settings.DEFAULT_ADMIN_EMAIL).first()
+        if not admin:
+            db.add(
+                User(
+                    name=settings.DEFAULT_ADMIN_NAME,
+                    email=settings.DEFAULT_ADMIN_EMAIL,
+                    password_hash=hash_password(settings.DEFAULT_ADMIN_PASSWORD),
+                    role="admin",
+                )
+            )
+            db.commit()
+    finally:
+        db.close()
+
+
+app.include_router(auth.router)
+app.include_router(employees.router)
+app.include_router(assets.router)
+app.include_router(assignments.router)
+app.include_router(reports.router)
+
+frontend_dir = Path(__file__).resolve().parent.parent / "frontend"
+if frontend_dir.exists():
+    app.mount("/", StaticFiles(directory=str(frontend_dir), html=True), name="frontend")
