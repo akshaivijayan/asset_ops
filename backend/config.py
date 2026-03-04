@@ -25,6 +25,8 @@ class Settings:
     DEFAULT_ADMIN_NAME: str = os.getenv("DEFAULT_ADMIN_NAME", "IT Admin")
     DEFAULT_ADMIN_EMAIL: str = os.getenv("DEFAULT_ADMIN_EMAIL", "admin@company.com")
     DEFAULT_ADMIN_PASSWORD: str = os.getenv("DEFAULT_ADMIN_PASSWORD", "Admin@123")
+    DEFAULT_VIEWER_EMAILS: str = os.getenv("DEFAULT_VIEWER_EMAILS", "ceo@company.com,hr@company.com,accounts@company.com")
+    DEFAULT_VIEWER_PASSWORD: str = os.getenv("DEFAULT_VIEWER_PASSWORD", "Viewer@123")
 
     @property
     def resolved_database_url(self) -> str:

@@ -73,6 +73,17 @@ class EmployeeOut(EmployeeBase):
     model_config = ConfigDict(from_attributes=True)
 
 
+class EmployeeOnboardRequest(EmployeeBase):
+    asset_ids: list[int] = []
+    assignment_notes: Optional[str] = None
+
+
+class EmployeeOffboardRequest(BaseModel):
+    employee_id: int
+    confirm: bool = False
+    notes: Optional[str] = None
+
+
 class AssetCategoryBase(BaseModel):
     name: str
     description: Optional[str] = None

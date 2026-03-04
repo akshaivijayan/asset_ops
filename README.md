@@ -1,12 +1,12 @@
-# Asset Tracker Web Application
+ï»¿# Asset Tracker Web Application
 
-Production-ready Asset Tracking System for Real Estate company IT operations, replacing manual Excel-based tracking.
+Production-ready Asset Tracking System that replaces manual Excel-based tracking.
 
 ## Features
 
 - JWT authentication with bcrypt password hashing
 - Role-based access control (`admin`, `viewer`)
-- Employee management (CRUD + deactivate)
+- Employee management (CRUD + deactivate/offboard)
 - Asset management (CRUD + status tracking)
 - Asset assignments and return workflow with history
 - Dashboard statistics and recent assignments
@@ -26,54 +26,9 @@ Production-ready Asset Tracking System for Real Estate company IT operations, re
 - Backend: FastAPI (Python)
 - ORM: SQLAlchemy
 - Database: PostgreSQL (preferred), SQLite fallback
-- Auth: JWT (`python-jose`) + `passlib[bcrypt]`
+- Auth: JWT (`python-jose`) + `bcrypt`
 
-## Project Structure
-
-```text
-asset-tracker
-¦
-+-- backend
-¦   +-- main.py
-¦   +-- database.py
-¦   +-- models.py
-¦   +-- schemas.py
-¦   +-- auth.py
-¦   +-- config.py
-¦   +-- routers
-¦   ¦   +-- auth.py
-¦   ¦   +-- employees.py
-¦   ¦   +-- assets.py
-¦   ¦   +-- assignments.py
-¦   ¦   +-- reports.py
-¦   +-- utils
-¦       +-- security.py
-¦       +-- excel_import.py
-¦
-+-- frontend
-¦   +-- index.html
-¦   +-- dashboard.html
-¦   +-- employees.html
-¦   +-- assets.html
-¦   +-- assignments.html
-¦   +-- reports.html
-¦   +-- css
-¦   ¦   +-- styles.css
-¦   +-- js
-¦       +-- api.js
-¦       +-- auth.js
-¦       +-- employees.js
-¦       +-- assets.js
-¦       +-- assignments.js
-¦       +-- reports.js
-¦       +-- dashboard.js
-¦
-+-- requirements.txt
-+-- .env.example
-+-- README.md
-```
-
-## Setup Instructions
+## Setup (Local)
 
 1. Create virtual environment and install dependencies:
 
@@ -102,7 +57,7 @@ uvicorn backend.main:app --reload
 4. Open app:
 
 - `http://127.0.0.1:8000/` (frontend + API)
-- Swagger API docs: `http://127.0.0.1:8000/docs`
+- `http://127.0.0.1:8000/docs` (Swagger)
 
 ## Database Configuration
 
@@ -116,29 +71,49 @@ Set either:
 
 - `DATABASE_URL=postgresql+psycopg2://user:pass@host:5432/dbname`
 
-or set individual `POSTGRES_*` vars and switch `APP_ENV` from `development` if desired.
+or set individual `POSTGRES_*` vars.
 
 Tables are auto-created on startup.
 
-## Default Login
+## Default Users (Auto-Seeded)
 
-Created automatically at startup if not present:
+Created automatically at startup if they do not exist:
 
-- Email: `admin@company.com`
-- Password: `Admin@123`
+- Admin:
+  - Email: `admin@company.com`
+  - Password: `Admin@123`
+- Viewer users:
+  - Emails: `ceo@company.com`, `hr@company.com`, `accounts@company.com`
+  - Password: `Viewer@123`
 
 Change these in `.env` for production.
 
-## RBAC
+## Render Deployment (Web + PostgreSQL)
 
-- `admin` (IT Admin): full create/update/delete/import/export actions.
-- `viewer` (CEO/HR/Accounts): read-only access to dashboards, employees, assets, assignments, reports.
+This repo includes `render.yaml` for Blueprint deployment.
+
+1. Push code to GitHub.
+2. In Render: `New` -> `Blueprint`.
+3. Connect this repository and select branch `main`.
+4. Render will create:
+   - `asset-ops-web` (FastAPI service)
+   - `asset-ops-db` (PostgreSQL)
+
+The app starts with:
+
+```bash
+uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+```
+
+`DATABASE_URL` is automatically wired from the Render PostgreSQL service.
 
 ## API Endpoints
 
 - `POST /api/auth/login`
 - `POST /api/auth/users` (admin)
 - `GET|POST|PUT|DELETE /api/employees`
+- `POST /api/employees/onboard` (admin)
+- `POST /api/employees/offboard` (admin)
 - `GET|POST|PUT|DELETE /api/assets`
 - `GET|POST|PUT /api/assignments`
 - `GET /api/reports/*`
@@ -161,6 +136,5 @@ Change these in `.env` for production.
 - Set secure `SECRET_KEY`
 - Restrict `CORS_ORIGINS`
 - Use PostgreSQL
-- Rotate default admin credentials
-- Run behind reverse proxy (Nginx/Traefik)
+- Rotate default credentials after first deployment
 - Use HTTPS

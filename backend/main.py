@@ -37,7 +37,24 @@ def startup() -> None:
                     role="admin",
                 )
             )
-            db.commit()
+            db.flush()
+
+        # Seed default viewer users for CEO/HR/Accounts access.
+        viewer_emails = [email.strip().lower() for email in settings.DEFAULT_VIEWER_EMAILS.split(",") if email.strip()]
+        for email in viewer_emails:
+            exists = db.query(User).filter(User.email == email).first()
+            if exists:
+                continue
+            name = email.split("@")[0].replace(".", " ").replace("_", " ").title()
+            db.add(
+                User(
+                    name=name or "Viewer User",
+                    email=email,
+                    password_hash=hash_password(settings.DEFAULT_VIEWER_PASSWORD),
+                    role="viewer",
+                )
+            )
+        db.commit()
     finally:
         db.close()
 

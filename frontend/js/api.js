@@ -185,6 +185,91 @@ async function demoApi(path, options = {}) {
     return row;
   }
 
+  if (pathname === "/api/employees/onboard" && method === "POST") {
+    const exists = db.employees.find((e) => String(e.email || "").toLowerCase() === String(body.email || "").toLowerCase());
+    if (exists) throw new Error("Employee email already exists");
+
+    const assetIds = Array.isArray(body.asset_ids) ? body.asset_ids.map((x) => Number(x)) : [];
+    const selectedAssets = db.assets.filter((a) => assetIds.includes(a.id));
+    if (selectedAssets.some((a) => a.status !== "Available" || a.is_deleted)) {
+      throw new Error("One or more selected assets are not available");
+    }
+
+    const employeeId = Math.max(0, ...db.employees.map((e) => e.id)) + 1;
+    const employee = {
+      id: employeeId,
+      employee_id: nextCode("EMP-", db.employees.length, 4),
+      is_deleted: false,
+      name: body.name,
+      email: body.email,
+      phone: body.phone || null,
+      designation: body.designation || null,
+      department: body.department || null,
+      reporting_person: body.reporting_person || null,
+      office_location: body.office_location || null,
+      joining_date: body.joining_date || null,
+      employment_status: body.employment_status || "Active",
+      notes: body.notes || null,
+    };
+    db.employees.push(employee);
+
+    let assignedCount = 0;
+    if (employee.employment_status === "Active") {
+      selectedAssets.forEach((asset) => {
+        const asnId = Math.max(0, ...db.assignments.map((a) => a.id)) + 1;
+        const assignment = {
+          id: asnId,
+          assignment_id: nextCode("ASN-", db.assignments.length, 5),
+          asset_id: asset.id,
+          employee_id: employee.id,
+          assigned_date: new Date().toISOString().slice(0, 10),
+          returned_date: null,
+          assignment_status: "Assigned",
+          notes: body.assignment_notes || null,
+        };
+        db.assignments.push(assignment);
+        asset.status = "Assigned";
+        assignedCount += 1;
+      });
+    }
+
+    saveDemoDb(db);
+    return {
+      message: "Employee onboarded successfully",
+      employee_id: employee.id,
+      employee_code: employee.employee_id,
+      assigned_assets: assignedCount,
+    };
+  }
+
+  if (pathname === "/api/employees/offboard" && method === "POST") {
+    if (!body.confirm) throw new Error("Confirmation is required");
+    const employeeId = Number(body.employee_id);
+    const employee = db.employees.find((e) => e.id === employeeId && !e.is_deleted);
+    if (!employee) throw new Error("Employee not found");
+
+    const activeAssignments = db.assignments.filter(
+      (a) => a.employee_id === employee.id && a.assignment_status === "Assigned"
+    );
+    activeAssignments.forEach((assignment) => {
+      assignment.assignment_status = "Returned";
+      assignment.returned_date = new Date().toISOString().slice(0, 10);
+      if (body.notes) assignment.notes = body.notes;
+      const asset = db.assets.find((a) => a.id === assignment.asset_id);
+      if (asset && asset.status === "Assigned") asset.status = "Available";
+    });
+
+    employee.employment_status = "Inactive";
+    employee.is_deleted = true;
+    saveDemoDb(db);
+    return {
+      message: "Employee offboarded successfully",
+      employee_id: employee.id,
+      employee_code: employee.employee_id,
+      returned_assets: activeAssignments.length,
+    };
+  }
+
   const employeeMatch = pathname.match(/^\/api\/employees\/(\d+)$/);
   if (employeeMatch && method === "PUT") {
     const id = Number(employeeMatch[1]);
