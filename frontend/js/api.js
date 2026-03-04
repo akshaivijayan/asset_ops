@@ -27,13 +27,13 @@ function seedDemoDb() {
       { id: 2, name: "CEO", email: "ceo@company.com", password: "Viewer@123", role: "viewer" },
     ],
     employees: [
-      { id: 1, employee_id: "EMP-0001", name: "Arun Nair", email: "arun@company.com", phone: "0500000001", designation: "Facilities Lead", department: "Operations", reporting_person: "COO", office_location: "Dubai HQ", joining_date: "2024-02-01", employment_status: "Active", notes: "Manages office equipment", is_deleted: false },
-      { id: 2, employee_id: "EMP-0002", name: "Sara Joseph", email: "sara@company.com", phone: "0500000002", designation: "Accountant", department: "Accounts", reporting_person: "Finance Manager", office_location: "Abu Dhabi Branch", joining_date: "2023-11-12", employment_status: "Active", notes: "", is_deleted: false },
+      { id: 1, employee_id: "EMP-0001", name: "Arun Nair", email: "arun@company.com", phone: "0500000001", designation: "Facilities Lead", department: "Operations", reporting_person: "COO", office_location: "Head Office", joining_date: "2024-02-01", employment_status: "Active", notes: "Manages office equipment", is_deleted: false },
+      { id: 2, employee_id: "EMP-0002", name: "Sara Joseph", email: "sara@company.com", phone: "0500000002", designation: "Accountant", department: "Accounts", reporting_person: "Finance Manager", office_location: "Regional Office", joining_date: "2023-11-12", employment_status: "Active", notes: "", is_deleted: false },
     ],
     assets: [
-      { id: 1, asset_id: "AST-00001", asset_unique_id: "LAP-DXB-001", asset_name: "Dell Latitude", category: "Laptop", brand: "Dell", model: "7420", serial_number: "SN001", purchase_date: "2024-01-10", purchase_cost: 4200, vendor: "Tech Gulf", warranty_expiry: "2026-12-30", asset_location: "Dubai HQ", status: "Assigned", is_deleted: false },
-      { id: 2, asset_id: "AST-00002", asset_unique_id: "MON-DXB-002", asset_name: "Samsung Monitor", category: "Monitor", brand: "Samsung", model: "S24", serial_number: "SN002", purchase_date: "2024-03-08", purchase_cost: 780, vendor: "Office Mart", warranty_expiry: "2027-03-07", asset_location: "Dubai HQ", status: "Available", is_deleted: false },
-      { id: 3, asset_id: "AST-00003", asset_unique_id: "TAB-ADB-003", asset_name: "iPad", category: "Tablet", brand: "Apple", model: "Air", serial_number: "SN003", purchase_date: "2024-06-02", purchase_cost: 2500, vendor: "Apple Reseller", warranty_expiry: "2026-06-01", asset_location: "Abu Dhabi Branch", status: "Under Repair", is_deleted: false },
+      { id: 1, asset_id: "AST-00001", asset_unique_id: "LAP-HQ-001", asset_name: "Dell Latitude", category: "Laptop", brand: "Dell", model: "7420", serial_number: "SN001", purchase_date: "2024-01-10", purchase_cost: 4200, vendor: "Tech Gulf", warranty_expiry: "2026-12-30", asset_location: "Head Office", status: "Assigned", is_deleted: false },
+      { id: 2, asset_id: "AST-00002", asset_unique_id: "MON-HQ-002", asset_name: "Samsung Monitor", category: "Monitor", brand: "Samsung", model: "S24", serial_number: "SN002", purchase_date: "2024-03-08", purchase_cost: 780, vendor: "Office Mart", warranty_expiry: "2027-03-07", asset_location: "Head Office", status: "Available", is_deleted: false },
+      { id: 3, asset_id: "AST-00003", asset_unique_id: "TAB-REG-003", asset_name: "iPad", category: "Tablet", brand: "Apple", model: "Air", serial_number: "SN003", purchase_date: "2024-06-02", purchase_cost: 2500, vendor: "Apple Reseller", warranty_expiry: "2026-06-01", asset_location: "Regional Office", status: "Under Repair", is_deleted: false },
     ],
     assignments: [
       { id: 1, assignment_id: "ASN-00001", asset_id: 1, employee_id: 1, assigned_date: today, returned_date: null, assignment_status: "Assigned", notes: "Initial issue" },
@@ -440,3 +440,4 @@ function renderEmptyRow(tbodyId, colSpan, message) {
   if (!body) return;
   body.innerHTML = `<tr><td colspan="${colSpan}" class="empty">${message}</td></tr>`;
 }
+
