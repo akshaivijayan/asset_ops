@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from .config import settings
 from .database import Base, SessionLocal, engine
 from .models import User
-from .routers import assets, assignments, auth, employees, reports
+from .routers import assets, assignments, auth, backups, employees, reports
 from .utils.security import hash_password
 
 app = FastAPI(title=settings.APP_NAME)
@@ -64,6 +64,7 @@ app.include_router(employees.router)
 app.include_router(assets.router)
 app.include_router(assignments.router)
 app.include_router(reports.router)
+app.include_router(backups.router)
 
 frontend_dir = Path(__file__).resolve().parent.parent / "frontend"
 if frontend_dir.exists():

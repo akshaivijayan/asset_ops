@@ -4,7 +4,7 @@ sqlalchemy
 pydantic
 email-validator
 python-jose
-passlib[bcrypt]
+bcrypt
 python-multipart
 pandas
 openpyxl

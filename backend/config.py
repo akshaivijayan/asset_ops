@@ -27,6 +27,8 @@ class Settings:
     DEFAULT_ADMIN_PASSWORD: str = os.getenv("DEFAULT_ADMIN_PASSWORD", "Admin@123")
     DEFAULT_VIEWER_EMAILS: str = os.getenv("DEFAULT_VIEWER_EMAILS", "ceo@company.com,hr@company.com,accounts@company.com")
     DEFAULT_VIEWER_PASSWORD: str = os.getenv("DEFAULT_VIEWER_PASSWORD", "Viewer@123")
+    BACKUP_DIR: str = os.getenv("BACKUP_DIR", "./backups")
+    BACKUP_RETENTION_DAYS: int = int(os.getenv("BACKUP_RETENTION_DAYS", "30"))
 
     @property
     def resolved_database_url(self) -> str:
