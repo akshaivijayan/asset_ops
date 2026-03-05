@@ -67,6 +67,7 @@ class EmployeeUpdate(BaseModel):
 class EmployeeOut(EmployeeBase):
     id: int
     employee_id: str
+    email: str
     created_at: datetime
     updated_at: datetime
 

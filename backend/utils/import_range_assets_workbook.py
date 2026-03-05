@@ -101,12 +101,12 @@ def get_or_create_category(db: Session, name: str) -> AssetCategory:
 
 
 def generate_placeholder_email(db: Session, name: str) -> str:
-    base = f"{slugify(name)}@import.local"
+    base = f"{slugify(name)}@example.com"
     candidate = base
     idx = 1
     while db.query(Employee).filter(Employee.email == candidate).first():
         idx += 1
-        candidate = f"{slugify(name)}-{idx}@import.local"
+        candidate = f"{slugify(name)}-{idx}@example.com"
     return candidate
 
 

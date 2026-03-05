@@ -157,6 +157,44 @@ function getDemoReport(db, reportName) {
   return [];
 }
 
+function getDemoEmployees(db) {
+  return db.employees
+    .filter((e) => !e.is_deleted)
+    .map((e) => ({
+      employee_id: e.employee_id,
+      name: e.name,
+      email: e.email,
+      phone: e.phone || "",
+      designation: e.designation || "",
+      department: e.department || "",
+      reporting_person: e.reporting_person || "",
+      office_location: e.office_location || "",
+      joining_date: e.joining_date || "",
+      employment_status: e.employment_status || "",
+      notes: e.notes || "",
+    }));
+}
+
+function getDemoAssets(db) {
+  return db.assets
+    .filter((a) => !a.is_deleted)
+    .map((a) => ({
+      asset_id: a.asset_id,
+      asset_unique_id: a.asset_unique_id,
+      asset_name: a.asset_name,
+      category: a.category || "",
+      brand: a.brand || "",
+      model: a.model || "",
+      serial_number: a.serial_number || "",
+      purchase_date: a.purchase_date || "",
+      purchase_cost: a.purchase_cost || "",
+      vendor: a.vendor || "",
+      warranty_expiry: a.warranty_expiry || "",
+      asset_location: a.asset_location || "",
+      status: a.status || "",
+    }));
+}
+
 async function demoApi(path, options = {}) {
   const method = (options.method || "GET").toUpperCase();
   const body = options.body ? safeJsonParse(options.body, {}) : {};
@@ -451,12 +489,28 @@ async function apiRequest(path, options = {}) {
 async function downloadFile(path, filename) {
   if (IS_GH_PAGES) {
     const db = loadDemoDb();
-    const match = path.match(/\/api\/reports\/export\/([^?]+)(\?.*)?$/);
-    if (!match) throw new Error("Invalid report path");
-    const reportName = match[1];
-    const query = new URLSearchParams((match[2] || "").replace("?", ""));
-    const fmt = query.get("fmt") || "csv";
-    const rows = getDemoReport(db, reportName);
+    const reportMatch = path.match(/\/api\/reports\/export\/([^?]+)(\?.*)?$/);
+    const employeeMatch = path.match(/\/api\/employees\/export(\?.*)?$/);
+    const assetMatch = path.match(/\/api\/assets\/export(\?.*)?$/);
+
+    let fmt = "csv";
+    let rows = [];
+    if (reportMatch) {
+      const reportName = reportMatch[1];
+      const query = new URLSearchParams((reportMatch[2] || "").replace("?", ""));
+      fmt = query.get("fmt") || "csv";
+      rows = getDemoReport(db, reportName);
+    } else if (employeeMatch) {
+      const query = new URLSearchParams((employeeMatch[1] || "").replace("?", ""));
+      fmt = query.get("fmt") || "csv";
+      rows = getDemoEmployees(db);
+    } else if (assetMatch) {
+      const query = new URLSearchParams((assetMatch[1] || "").replace("?", ""));
+      fmt = query.get("fmt") || "csv";
+      rows = getDemoAssets(db);
+    } else {
+      throw new Error("Invalid export path");
+    }
 
     if (fmt === "excel") {
       // CSV content saved as .xlsx for preview-only demo mode.

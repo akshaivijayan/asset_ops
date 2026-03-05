@@ -36,6 +36,11 @@
           <input id="designation" placeholder="Filter by designation" />
           <input id="department" placeholder="Filter by department" />
           <button onclick="loadEmployees()">Apply Filters</button>
+          <select id="employeeExportFormat">
+            <option value="csv">CSV</option>
+            <option value="excel">Excel</option>
+          </select>
+          <button id="exportEmployeesBtn" class="ghost">Export Employees</button>
         </div>
         <table>
           <thead>

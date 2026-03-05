@@ -9,6 +9,7 @@ if (document.getElementById("assetRows")) {
 
   document.getElementById("addAssetBtn")?.addEventListener("click", () => openAssetModal());
   document.getElementById("assetForm").addEventListener("submit", saveAsset);
+  document.getElementById("exportAssetsBtn")?.addEventListener("click", exportAssets);
 }
 
 async function loadAssets() {
@@ -115,6 +116,17 @@ async function deleteAsset(id) {
     await apiRequest(`/api/assets/${id}`, { method: "DELETE" });
     showToast("Asset deactivated", "info");
     loadAssets();
+  } catch (err) {
+    showToast(err.message, "error");
+  }
+}
+
+async function exportAssets() {
+  try {
+    const format = document.getElementById("assetExportFormat")?.value || "csv";
+    const ext = format === "excel" ? "xlsx" : "csv";
+    await downloadFile(`/api/assets/export?fmt=${format}`, `assets.${ext}`);
+    showToast("Assets exported", "success");
   } catch (err) {
     showToast(err.message, "error");
   }

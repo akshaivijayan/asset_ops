@@ -45,6 +45,11 @@
           </select>
           <input id="assigned_employee" placeholder="Assigned Employee" />
           <button onclick="loadAssets()">Apply Filters</button>
+          <select id="assetExportFormat">
+            <option value="csv">CSV</option>
+            <option value="excel">Excel</option>
+          </select>
+          <button id="exportAssetsBtn" class="ghost">Export Assets</button>
         </div>
         <table>
           <thead>

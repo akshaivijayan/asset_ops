@@ -9,6 +9,7 @@ if (document.getElementById("employeeRows")) {
 
   document.getElementById("addEmployeeBtn")?.addEventListener("click", () => openEmployeeModal());
   document.getElementById("employeeForm").addEventListener("submit", saveEmployee);
+  document.getElementById("exportEmployeesBtn")?.addEventListener("click", exportEmployees);
 }
 
 async function loadEmployees() {
@@ -115,6 +116,17 @@ async function deleteEmployee(id) {
     await apiRequest(`/api/employees/${id}`, { method: "DELETE" });
     showToast("Employee deactivated", "info");
     loadEmployees();
+  } catch (err) {
+    showToast(err.message, "error");
+  }
+}
+
+async function exportEmployees() {
+  try {
+    const format = document.getElementById("employeeExportFormat")?.value || "csv";
+    const ext = format === "excel" ? "xlsx" : "csv";
+    await downloadFile(`/api/employees/export?fmt=${format}`, `employees.${ext}`);
+    showToast("Employees exported", "success");
   } catch (err) {
     showToast(err.message, "error");
   }

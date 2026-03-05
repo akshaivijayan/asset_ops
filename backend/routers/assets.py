@@ -1,4 +1,8 @@
+from io import BytesIO, StringIO
+
+import pandas as pd
 from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import StreamingResponse
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
@@ -75,6 +79,57 @@ def list_assets(
 
     assets = query.order_by(Asset.id.desc()).offset(skip).limit(limit).all()
     return [_to_asset_out(asset) for asset in assets]
+
+
+@router.get("/export")
+def export_assets(
+    fmt: str = "csv",
+    db: Session = Depends(get_db),
+    _=Depends(require_roles("admin", "viewer")),
+):
+    rows = db.query(Asset).filter(Asset.is_deleted == False).order_by(Asset.id.desc()).all()
+    data = [
+        {
+            "asset_id": row.asset_id,
+            "asset_unique_id": row.asset_unique_id,
+            "asset_name": row.asset_name,
+            "category": row.category_rel.name if row.category_rel else None,
+            "brand": row.brand,
+            "model": row.model,
+            "serial_number": row.serial_number,
+            "purchase_date": row.purchase_date,
+            "purchase_cost": row.purchase_cost,
+            "vendor": row.vendor,
+            "warranty_expiry": row.warranty_expiry,
+            "asset_location": row.asset_location,
+            "status": row.status,
+        }
+        for row in rows
+    ]
+
+    df = pd.DataFrame(data)
+    if fmt == "csv":
+        buffer = StringIO()
+        df.to_csv(buffer, index=False)
+        buffer.seek(0)
+        return StreamingResponse(
+            iter([buffer.getvalue()]),
+            media_type="text/csv",
+            headers={"Content-Disposition": "attachment; filename=assets.csv"},
+        )
+
+    if fmt == "excel":
+        buffer = BytesIO()
+        with pd.ExcelWriter(buffer, engine="openpyxl") as writer:
+            df.to_excel(writer, index=False, sheet_name="assets")
+        buffer.seek(0)
+        return StreamingResponse(
+            buffer,
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={"Content-Disposition": "attachment; filename=assets.xlsx"},
+        )
+
+    raise HTTPException(status_code=400, detail="Format must be csv or excel")
 
 
 @router.post("", response_model=AssetOut)

@@ -1,6 +1,10 @@
 from datetime import date
+from io import BytesIO, StringIO
+
+import pandas as pd
 
 from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import StreamingResponse
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
@@ -41,6 +45,55 @@ def list_employees(
         query = query.filter(Employee.department.ilike(f"%{department}%"))
 
     return query.order_by(Employee.id.desc()).offset(skip).limit(limit).all()
+
+
+@router.get("/export")
+def export_employees(
+    fmt: str = "csv",
+    db: Session = Depends(get_db),
+    _=Depends(require_roles("admin", "viewer")),
+):
+    rows = db.query(Employee).filter(Employee.is_deleted == False).order_by(Employee.id.desc()).all()
+    data = [
+        {
+            "employee_id": row.employee_id,
+            "name": row.name,
+            "email": row.email,
+            "phone": row.phone,
+            "designation": row.designation,
+            "department": row.department,
+            "reporting_person": row.reporting_person,
+            "office_location": row.office_location,
+            "joining_date": row.joining_date,
+            "employment_status": row.employment_status,
+            "notes": row.notes,
+        }
+        for row in rows
+    ]
+
+    df = pd.DataFrame(data)
+    if fmt == "csv":
+        buffer = StringIO()
+        df.to_csv(buffer, index=False)
+        buffer.seek(0)
+        return StreamingResponse(
+            iter([buffer.getvalue()]),
+            media_type="text/csv",
+            headers={"Content-Disposition": "attachment; filename=employees.csv"},
+        )
+
+    if fmt == "excel":
+        buffer = BytesIO()
+        with pd.ExcelWriter(buffer, engine="openpyxl") as writer:
+            df.to_excel(writer, index=False, sheet_name="employees")
+        buffer.seek(0)
+        return StreamingResponse(
+            buffer,
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={"Content-Disposition": "attachment; filename=employees.xlsx"},
+        )
+
+    raise HTTPException(status_code=400, detail="Format must be csv or excel")
 
 
 @router.post("", response_model=EmployeeOut)
